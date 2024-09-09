@@ -14,6 +14,7 @@ namespace Demo.DAL.Models
         public string Code { get; set; }
         [Required(ErrorMessage = "Name is Required")]
         public string Name { get; set; }
+        [Display(Name ="Data of Creation")]
         public DateTime DateOfCreation { get; set; }
     }
 }
