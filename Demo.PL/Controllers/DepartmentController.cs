@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
 using System;
+using System.Linq.Expressions;
 
 namespace Demo.PL.Controllers
 {
@@ -90,7 +91,30 @@ namespace Demo.PL.Controllers
                 if (_env.IsDevelopment())
                     ModelState.AddModelError(string.Empty, ex.Message);
                 else
-                    ModelState.AddModelError(string.Empty, "An Error Occured During Update Department");
+                    ModelState.AddModelError(string.Empty, "An Error Occurred During Update Department");
+
+                return View(department);
+            }
+        }
+        [HttpGet]
+        public IActionResult Delete(int? id)
+        {
+            return Details(id, "Delete");
+        }
+        [HttpPost]
+        public IActionResult Delete(Department department)
+        {
+            try
+            {
+                _departmentRepository.Delete(department);
+                return RedirectToAction(nameof(Index));         
+            }
+            catch (Exception ex)
+            {
+                if (_env.IsDevelopment())
+                    ModelState.AddModelError(string.Empty, ex.Message);
+                else
+                    ModelState.AddModelError(string.Empty, "An Error Occurred During Delete Department");
 
                 return View(department);
             }
