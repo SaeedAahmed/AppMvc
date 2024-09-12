@@ -22,7 +22,12 @@ namespace Demo.PL.Controllers
         }
         public IActionResult Index()
         {
-           var departments = _departmentRepository.GetAll(); 
+            TempData.Keep();
+           var departments = _departmentRepository.GetAll();
+            // ViewData
+            ViewData["message"] = "Hello :)";
+            // ViewBag
+            // ViewBag.message = "Hello ";
             return View(departments);
         }
         [HttpGet]
@@ -37,6 +42,7 @@ namespace Demo.PL.Controllers
             {
                 var count = _departmentRepository.Add(department);
                 if (count > 0)
+                    TempData["message"] = "The Department created successfully";
                     return RedirectToAction(nameof(Index));
             }
             return View(department);
