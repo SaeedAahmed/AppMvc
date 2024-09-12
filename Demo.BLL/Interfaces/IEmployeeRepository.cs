@@ -7,12 +7,8 @@ using System.Threading.Tasks;
 
 namespace Demo.BLL.Interfaces
 {
-    internal interface IEmployeeRepository
+    public interface IEmployeeRepository:IGenericRepository<Employee>
     {
-        IEnumerable<Employee> GetAll();
-        Employee GetById(int id);
-        int Add(Employee Employee);
-        int Update(Employee Employee);
-        int Delete(Employee Employee);
+        IQueryable<Employee> GetEmployeeByAddress(string address);
     }
 }

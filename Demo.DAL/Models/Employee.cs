@@ -22,22 +22,22 @@ namespace Demo.DAL.Models
         [EnumMember(Value = "PartTime")]
         PartTime =2
     }
-    public class Employee
+    public class Employee:ModelBase
     {
-        public int Id { get; set; }
+        
         [Required(ErrorMessage ="Name is required") ]
         [MaxLength(50, ErrorMessage = "Max Length For Name is 50")]
         [MinLength(4, ErrorMessage = "MIn Length For Name is 4")]
         public string Name { get; set; }
+        [Range(22, 60, ErrorMessage = "Age Must Be Between 22 and 60")]
         public int? Age { get; set; }
-        [RegularExpression(@"^[0-9]{1,3}-[a-zA-Z]-{5-10}-[a-zA-Z]-{4-10}-[a-zA-Z]-{5-10}$" 
-                           ,ErrorMessage = "Address Must be Like 123-Street-City-Country"
-        )]
+        [RegularExpression(@"^[0-9]{1,10}-[a-zA-Z]{1,40}-[a-zA-Z]{1,40}-[a-zA-Z]{1,40}$", ErrorMessage = "Address Must be in form of '123-Street-Region-City'")]
         public string Address { get; set; }
         [DataType(DataType.Currency)]
+        [Range(4000, 8000, ErrorMessage = "Salary Must Be Between 4000 & 8000")]
         public decimal Salary { get; set; }
         public bool IsActive { get; set; }
-        [EmailAddress]
+        [EmailAddress(ErrorMessage = "Enter Email in a correct form ")]
         public string Email { get; set; }
         [Phone]
         [Display(Name = "Phone Number")]
