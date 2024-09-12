@@ -1,0 +1,54 @@
+﻿@model Employee
+<div class="form-group">
+    <label class="col-form-label" asp-for="Name"></label>
+    <input class="form-control" asp-for="Name" readonly />
+</div>
+
+<div class="form-group">
+    <label class="col-form-label" asp-for="Age"></label>
+    <input class="form-control" asp-for="Age" readonly />
+
+</div>
+
+<div class="form-group">
+    <label class="col-form-label" asp-for="Address"></label>
+    <input class="form-control" asp-for="Address" readonly />
+</div>
+
+<div class="form-group">
+    <label class="col-form-label" asp-for="Salary"></label>
+    <input class="form-control" asp-for="Salary" readonly />
+
+</div>
+
+<div class="form-group">
+    <label class="col-form-label" asp-for="Email"></label>
+    <input type="email" class="form-control" asp-for="Email" readonly />
+
+</div>
+
+<div class="form-group">
+    <label class="col-form-label" asp-for="Phone"></label>
+    <input type="number" class="form-control" asp-for="Phone" readonly />
+</div>
+
+<div class="form-group">
+    <label class="col-form-label" asp-for="HireDate"></label>
+    <input class="form-control" asp-for="HireDate" readonly />
+</div>
+
+<div class="form-group">
+    <label class="col-form-label" asp-for="Gender"></label>
+    <input class="form-control" asp-for="Gender" readonly />
+</div>
+<div class="form-group">
+    <div class="d-inline-block">
+        <input type="checkbox" class="form-check-input" asp-for="IsActive" readonly />
+        <label class="form-check-label" asp-for="IsActive"></label>
+    </div>
+
+    <div class="d-inline-block ml-4">
+        <input type="checkbox" class="form-check-input" asp-for="IsDeleted" readonly />
+        <label class="form-check-label" asp-for="IsDeleted"></label>
+    </div>
+</div>
