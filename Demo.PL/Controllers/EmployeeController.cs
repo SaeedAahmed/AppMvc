@@ -20,7 +20,9 @@ namespace Demo.PL.Controllers
         }
         public IActionResult Index()
         {
+            TempData.Keep();
             var Employees = _EmployeeRepository.GetAll();
+            ViewData["message"] = "Hello :)";
             return View(Employees);
         }
         [HttpGet]
@@ -35,7 +37,9 @@ namespace Demo.PL.Controllers
             {
                 var count = _EmployeeRepository.Add(Employee);
                 if (count > 0)
-                    return RedirectToAction(nameof(Index));
+                    TempData["message"] = "The employee created successfully";
+
+                return RedirectToAction(nameof(Index));
             }
             return View(Employee);
         }

@@ -3,8 +3,17 @@
 @{
     ViewData["Title"] = "Index";
 }
+<div class="alert alert-success">
+    @ViewData["message"]
+</div>
+@if (!string.IsNullOrEmpty(TempData["message"] as string))
+{
+    <div class="alert alert-success">
+        @TempData["message"]
+    </div>
+}
 
-<h1>All Department</h1>
+<h1 class="my-3">All Department</h1>
 <a asp-controller="Department" asp-action="Create" class="btn btn-primary my-3">Create new Department</a>
 @if (Model.Count() > 0)
 {
