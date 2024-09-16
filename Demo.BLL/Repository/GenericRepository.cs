@@ -33,7 +33,15 @@ namespace Demo.BLL.Repository
 
         public IEnumerable<T> GetAll()
         {
-            return _dbContext.Set<T>().AsNoTracking().ToList();
+            if (typeof(T)==typeof(Employee))
+            {
+                return (IEnumerable<T>) _dbContext.Employee.Include(E => E.Department).AsNoTracking().ToList();
+            }
+            else
+            {
+                return _dbContext.Set<T>().AsNoTracking().ToList();
+            }
+           
 
         }
 
