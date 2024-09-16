@@ -1,4 +1,10 @@
-﻿@model Employee
+﻿
+@model EmployeeViewModel
+@inject IDepartmentRepository _departmentRepo
+@{
+    ViewBag.Department = _departmentRepo.GetAll();
+    var department = new SelectList(ViewBag.Department/* ViewData["Department"] as IEnumerable<Department> */,nameof(Department.Id),nameof(Department.Name));
+}
 <div class="form-group">
     <label class="col-form-label" asp-for="Name"></label>
     <input class="form-control" asp-for="Name" />
@@ -48,6 +54,14 @@
 </div>
 
 <div class="form-group">
+
+    <label class="col-form-label" asp-for="Department"></label>
+    <select class="form-control" asp-items="department" asp-for="DepartmentId">
+        <option>--Select-Department--</option>
+    </select>
+</div>
+
+<div class="form-group">
     <div class="d-inline-block">
         <input type="checkbox" class="form-check-input" asp-for="IsActive" />
         <label class="form-check-label" asp-for="IsActive"></label>
@@ -58,3 +72,4 @@
         <label class="form-check-label" asp-for="IsDeleted"></label>
     </div>
 </div>
+

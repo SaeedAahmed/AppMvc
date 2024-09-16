@@ -1,9 +1,12 @@
-﻿using Demo.BLL.Interfaces;
+﻿using AutoMapper;
+using Demo.BLL.Interfaces;
 using Demo.DAL.Models;
+using Demo.PL.ViewModels;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
 using System;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 
 namespace Demo.PL.Controllers
@@ -14,11 +17,13 @@ namespace Demo.PL.Controllers
     {
         private IDepartmentRepository _departmentRepository;
         private readonly IWebHostEnvironment _env;
+        private readonly IMapper _mapper;
 
-        public DepartmentController( IDepartmentRepository repository , IWebHostEnvironment env)
+        public DepartmentController( IDepartmentRepository repository , IWebHostEnvironment env, IMapper mapper)
         {
            _departmentRepository = repository;
             _env = env;
+            _mapper = mapper;
         }
         public IActionResult Index()
         {
@@ -28,7 +33,9 @@ namespace Demo.PL.Controllers
             ViewData["message"] = "Hello :)";
             // ViewBag
             // ViewBag.message = "Hello ";
-            return View(departments);
+            var department = _mapper.Map<IEnumerable<Department>, IEnumerable<DepartmentViewModel>>(departments);
+
+            return View(department);
         }
         [HttpGet]
         public IActionResult Create()
@@ -36,16 +43,17 @@ namespace Demo.PL.Controllers
             return View();
         }
         [HttpPost]
-        public IActionResult Create(Department department)
+        public IActionResult Create(DepartmentViewModel departmentVM)
         {
             if (ModelState.IsValid)
             {
-                var count = _departmentRepository.Add(department);
+                var mapperDept = _mapper.Map<DepartmentViewModel, Department>(departmentVM);
+                var count = _departmentRepository.Add(mapperDept);
                 if (count > 0)
                     TempData["message"] = "The Department created successfully";
                     return RedirectToAction(nameof(Index));
             }
-            return View(department);
+            return View(departmentVM);
         }
         [HttpGet]
         public IActionResult Details(int? id , string viewName = "Details")
@@ -59,7 +67,9 @@ namespace Demo.PL.Controllers
             {
                 return NotFound(); // 404
             }
-            return View(viewName,department);
+            var MappedDept = _mapper.Map<Department, DepartmentViewModel>(department);
+
+            return View(viewName, MappedDept);
         }
         [HttpGet]
         public IActionResult Edit(int? id)
@@ -78,18 +88,20 @@ namespace Demo.PL.Controllers
             return Details(id, "Edit");
         }
         [HttpPost]
-        public IActionResult Edit([FromRoute] int id,Department department)
+        [ValidateAntiForgeryToken]
+        public IActionResult Edit([FromRoute] int id,DepartmentViewModel departmentVM)
         {
-            if(id!=department.Id)
+            if(id!= departmentVM.Id)
                 return BadRequest();
 
             if (!ModelState.IsValid)
-                return View(department);
+                return View(departmentVM);
             
          
             try
             {
-                _departmentRepository.Update(department);
+                var MappedDept = _mapper.Map<DepartmentViewModel, Department>(departmentVM);
+                _departmentRepository.Update(MappedDept);
                 return RedirectToAction(nameof(Index));
             }
             catch(Exception ex)
@@ -99,7 +111,7 @@ namespace Demo.PL.Controllers
                 else
                     ModelState.AddModelError(string.Empty, "An Error Occurred During Update Department");
 
-                return View(department);
+                return View(departmentVM);
             }
         }
         [HttpGet]
@@ -108,11 +120,13 @@ namespace Demo.PL.Controllers
             return Details(id, "Delete");
         }
         [HttpPost]
-        public IActionResult Delete(Department department)
+        [ValidateAntiForgeryToken]
+        public IActionResult Delete(DepartmentViewModel departmentVM)
         {
             try
             {
-                _departmentRepository.Delete(department);
+                var MappedDept = _mapper.Map<DepartmentViewModel, Department>(departmentVM);
+                _departmentRepository.Delete(MappedDept);
                 return RedirectToAction(nameof(Index));         
             }
             catch (Exception ex)
@@ -122,7 +136,7 @@ namespace Demo.PL.Controllers
                 else
                     ModelState.AddModelError(string.Empty, "An Error Occurred During Delete Department");
 
-                return View(department);
+                return View(departmentVM);
             }
         }
     }

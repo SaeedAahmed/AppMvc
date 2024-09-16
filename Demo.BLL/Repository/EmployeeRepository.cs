@@ -20,8 +20,10 @@ namespace Demo.BLL.Repository
         }
 
         public IQueryable<Employee> GetEmployeeByAddress(string address)
-        {
-            return _dbContext.Employee.Where(E => E.Address.ToLower().Contains(address.ToLower()));
-        }
+               => _dbContext.Employee.Where(E => E.Address.ToLower().Contains(address.ToLower()));
+
+        public IQueryable<Employee> SearchEmployeeByName(string name)
+               => _dbContext.Employee.Where(E => E.Name.ToLower().Contains(name.ToLower()));
+        
     }
 }

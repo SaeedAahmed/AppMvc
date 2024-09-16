@@ -1,11 +1,10 @@
-﻿
-@model IEnumerable<Department>
+﻿@model IEnumerable<DepartmentViewModel>
 @{
     ViewData["Title"] = "Index";
 }
-<div class="alert alert-success">
+@* <div class="alert alert-success">
     @ViewData["message"]
-</div>
+</div> *@
 @if (!string.IsNullOrEmpty(TempData["message"] as string))
 {
     <div class="alert alert-success">
