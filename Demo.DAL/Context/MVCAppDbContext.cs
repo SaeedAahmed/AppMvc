@@ -1,4 +1,6 @@
 ﻿using Demo.DAL.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -8,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Demo.DAL.Context
 {
-    public class MVCAppDbContext : DbContext
+    public class MVCAppDbContext : IdentityDbContext
     {
         public MVCAppDbContext(DbContextOptions<MVCAppDbContext> options):base(options) 
         {
@@ -17,6 +19,11 @@ namespace Demo.DAL.Context
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfigurationsFromAssembly(System.Reflection.Assembly.GetExecutingAssembly());
+            base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<IdentityRole>()
+                        .ToTable("Roles");
+            modelBuilder.Entity<IdentityUser>()
+                        .ToTable("Users");
         }
         //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         //   => optionsBuilder.UseSqlServer("Server = . ; Database = MVCAppDb ;Trusted_Connection = true ; MultipleActiveResultSets=true");

@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Demo.BLL.Interfaces;
 using Demo.DAL.Models;
+using Demo.PL.Helper;
 using Demo.PL.ViewModels;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -14,15 +15,17 @@ namespace Demo.PL.Controllers
 
     public class EmployeeController : Controller
     {
-        private IEmployeeRepository _EmployeeRepository;
+        //private IEmployeeRepository _EmployeeRepository;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IWebHostEnvironment _env;
         private readonly IMapper _mapper;
 
         //private readonly IDepartmentRepository _departmentRepository;
 
-        public EmployeeController(IEmployeeRepository repository, IWebHostEnvironment env,IMapper mapper  /*,IDepartmentRepository departmentRepository*/)
+        public EmployeeController(IUnitOfWork unitOfWork,/* IEmployeeRepository employeeRepository*/ IWebHostEnvironment env,IMapper mapper)
         {
-            _EmployeeRepository = repository;
+            //_EmployeeRepository = repository;
+           _unitOfWork = unitOfWork;
             _env = env;
             _mapper = mapper;
             //_departmentRepository = departmentRepository;
@@ -30,11 +33,9 @@ namespace Demo.PL.Controllers
         public IActionResult Index(string SearchValue)
         {
             IEnumerable<Employee> employees;
-            if (string.IsNullOrEmpty(SearchValue))
-                employees = _EmployeeRepository.GetAll();   
-            else
-                employees=_EmployeeRepository.SearchEmployeeByName(SearchValue);
-
+            if (string.IsNullOrEmpty(SearchValue)) { employees = _unitOfWork.EmployeeRepository.GetAll(); }
+            else { employees = _unitOfWork.EmployeeRepository.SearchEmployeeByName(SearchValue); }
+                
             var MappedEmp = _mapper.Map<IEnumerable<Employee>, IEnumerable<EmployeeViewModel>>(employees);
             return View(MappedEmp);
         }
@@ -64,8 +65,15 @@ namespace Demo.PL.Controllers
                 ///    IsDeleted = employeeVM.IsDeleted,
                 ///    Gender = employeeVM.Gender
                 ///};
+                ///
+
+                if(employeeVM.Image!=null)
+                {
+                    employeeVM.ImageName = DocumentSettings.UploadFile(employeeVM.Image, "Images");
+                }
                 var mapperEmp = _mapper.Map<EmployeeViewModel, Employee>(employeeVM);
-                var count = _EmployeeRepository.Add(mapperEmp);
+                _unitOfWork.EmployeeRepository.Add(mapperEmp);
+              var count =  _unitOfWork.Complete();
                 if (count > 0)
                     TempData["message"] = "The employee created successfully";
 
@@ -80,7 +88,7 @@ namespace Demo.PL.Controllers
             {
                 return BadRequest(); 
             }
-            var Employee = _EmployeeRepository.GetById(id.Value);
+            var Employee = _unitOfWork.EmployeeRepository.GetById(id.Value);
             //ViewBag.Department = _departmentRepository.GetAll();
             if (Employee == null)
             {
@@ -107,12 +115,13 @@ namespace Demo.PL.Controllers
 
             if (!ModelState.IsValid)
                 return View(employeeVM);
-
-
             try
             {
+                employeeVM.ImageName = DocumentSettings.UploadFile(employeeVM.Image, "Images");
+
                 var mappedEmp = _mapper.Map<EmployeeViewModel, Employee>(employeeVM);
-                _EmployeeRepository.Update(mappedEmp);
+                _unitOfWork.EmployeeRepository.Update(mappedEmp);
+                _unitOfWork.Complete();
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)
@@ -137,7 +146,12 @@ namespace Demo.PL.Controllers
             try
             {
                 var MappedEmp = _mapper.Map<EmployeeViewModel, Employee>(employeeVM);
-                _EmployeeRepository.Delete(MappedEmp);
+                _unitOfWork.EmployeeRepository.Delete(MappedEmp);
+              var count = _unitOfWork.Complete();
+                if (count > 0)
+                {
+                    DocumentSettings.Delete(employeeVM.ImageName, "Images");
+                }
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)

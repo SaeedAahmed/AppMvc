@@ -1,4 +1,5 @@
 ﻿using Demo.DAL.Models;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.ComponentModel.DataAnnotations;
 
@@ -22,6 +23,8 @@ namespace Demo.PL.ViewModels
         public bool IsActive { get; set; }
         [EmailAddress(ErrorMessage = "Enter Email in a correct form ")]
         public string Email { get; set; }
+        public string ImageName { get; set; }
+        public IFormFile Image { get; set; }
         [Phone]
         public string Phone { get; set; }
         public DateTime HireDate { get; set; }
