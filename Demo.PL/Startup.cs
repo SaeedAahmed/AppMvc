@@ -1,10 +1,14 @@
 using Demo.BLL.Interfaces;
 using Demo.BLL.Repository;
 using Demo.DAL.Context;
+using Demo.DAL.Models;
 using Demo.PL.Mapper;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -40,7 +44,25 @@ namespace Demo.PL
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddAutoMapper(M=>M.AddProfile(new EmployeeProfile()));
             services.AddAutoMapper(M => M.AddProfile(new DepartmentProfile()));
-        }
+            services.AddIdentity<ApplicationUser, IdentityRole>(config =>
+            {
+                config.Password.RequiredUniqueChars = 2;
+                config.Password.RequireDigit = true;
+                config.Password.RequireLowercase = true;
+                config.Password.RequireUppercase = true;
+                config.Password.RequireNonAlphanumeric = true;
+                config.User.RequireUniqueEmail = true;
+                config.Lockout.MaxFailedAccessAttempts = 3;
+                config.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(3);
+            }).AddEntityFrameworkStores<MVCAppDbContext>().AddDefaultTokenProviders();
+
+			//services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+			//  .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
+			//  {
+			//	  options.LoginPath = new PathString("/Account/SignIn");
+			//	  options.AccessDeniedPath = new PathString("/Home/Error");
+			//  });
+		}
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -59,14 +81,14 @@ namespace Demo.PL
             app.UseStaticFiles();
 
             app.UseRouting();
-
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                    pattern: "{controller=Account}/{action=SignIn}/{id?}");
             });
         }
     }
