@@ -4,24 +4,37 @@
     Layout = "_AythLayout";
 }
 
-<div class="main-agileinfo">
-<div class="agileits-top">
-	<form asp-action="SignIn">
-		<div asp-validation-summary="All"></div>
-		<input class="text email" type="email" asp-for="Email" placeholder="Email" required="">
-		<input class="text" type="password" asp-for="Password" placeholder="Password" required="">
-		<div class="wthree-text">
-			<label class="anim my-2">
-				<input type="checkbox" asp-for="RememberMe" class="checkbox">
-				<span>Remember Me !</span>
-			</label>
-			<div class="clear"> </div>
-		</div>
-		<input type="submit" value="LOGIN">
-	</form>
-	<p>Don't have an Account? <a asp-action="SignUp"> Register Now!</a></p>
-	<p><a asp-action="ForgetPassword" asp-controller="Account" class="text-white"> Forget Password ?!</a></p>
-</div>
+<span class="padding-bottom--15">Sign in to your account</span>
+<form id="stripe-login" asp-action="SignIn">
+    <div class="field padding-bottom--24">
+        <label asp-for="Email">Email</label>
+        <input class="text email" type="email" asp-for="Email" placeholder="Email" required="">
+    </div>
+    <div class="field padding-bottom--24">
+        <div class="grid--50-50">
+            <label asp-for="Password">Password</label>
+            <div class="reset-pass">
+                <a asp-action="ForgetPassword">Forgot your password?</a>
+            </div>
+        </div>
+        <input class="text email" type="password" asp-for="Password" placeholder="Password" required="">
+    </div>
+    <div class="field field-checkbox padding-bottom--24 flex-flex align-center">
+        <label for="checkbox">
+            <input type="checkbox" asp-for="RememberMe">Remember Me
+        </label>
+    </div>
+    <div class="field padding-bottom--24">
+        <input type="submit" value="SignIn">
+    </div>
+    <div class="field">
+        <a class="ssolink" href="#">Use single sign-on (Google) instead</a>
+    </div>
+</form>
+<div class="footer-link padding-top--24">
+    <span>Don't have an account? <a asp-action="SignUp">Sign up</a></span>
+    <div class="listing padding-top--24 padding-bottom--24 flex-flex center-center">
+    </div>
 </div>
 @section ValidateSection
 {
