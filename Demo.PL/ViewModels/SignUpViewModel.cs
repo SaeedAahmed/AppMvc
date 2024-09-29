@@ -16,6 +16,8 @@ namespace Demo.PL.ViewModels
 		[Required(ErrorMessage = "Confirm Password is Required")]
 		[Compare("Password", ErrorMessage = "Password Dosn't Match")]
 		public string ConfirmPassword { get; set; }
-		public bool IsAgree { get; set; }
+        [Phone]
+        public string PhoneNumber { get; set; }
+        public bool IsAgree { get; set; }
 	}
 }

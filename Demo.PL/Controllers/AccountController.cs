@@ -36,8 +36,6 @@ namespace Demo.PL.Controllers
 					UserName = ViewModel.Email.Split('@')[0],
 					Email = ViewModel.Email,
 					IsAgree = ViewModel.IsAgree,
-					FName = ViewModel.FName,
-					LName = ViewModel.LName,
 				};
 				var result = await _userManager.CreateAsync(user, ViewModel.Password);
 				if (result.Succeeded)
@@ -97,39 +95,41 @@ namespace Demo.PL.Controllers
 		}
 
 		[HttpPost]
-		public async Task<IActionResult> ForgetPassword( ForgetPasswordViewModel forgetPasswordVM)
-		{
-			if (ModelState.IsValid)
-			{
-				var user =await _userManager.FindByEmailAsync(forgetPasswordVM.Email);
-				if (user is not null) 
-				{
-					string token = await _userManager.GeneratePasswordResetTokenAsync(user);
-					var PasswordResetLink = Url.Action("ResetPassword", "Account", new { email = user.Email , token = token }, "https", "localhost:44376");
+        [HttpPost]
+        public async Task<IActionResult> ForgetPassword(ForgetPasswordViewModel forgetPasswordVM)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await _userManager.FindByEmailAsync(forgetPasswordVM.Email);
+                if (user != null)
+                {
+                    string token = await _userManager.GeneratePasswordResetTokenAsync(user);
+                    var passwordResetLink = Url.Action("ResetPassword", "Account", new { email = user.Email, token = token }, protocol: Request.Scheme);
 
-					var email = new Email()
-					{
-						Subject = "Reset Email",
-						Body = PasswordResetLink,
-						To = user.Email
-					};
-					EmailSetting.SendEmail(email);
-					return RedirectToAction(nameof(checkedYourInbox));
-				}
-				ModelState.AddModelError(string.Empty, "Email Is Not Exsited");
-			}
-			return View(forgetPasswordVM);
-		}
+                    var emailMessage = new Email()
+                    {
+                        Subject = "Reset Your Password",
+                        Body = $"Please reset your password by clicking here: <a href='{passwordResetLink}'>link</a>",
+                        To = user.Email
+                    };
+                    EmailSetting.SendEmail(emailMessage);
+                    return RedirectToAction(nameof(checkedYourInbox), new { email = user.Email });
+                }
+                ModelState.AddModelError(string.Empty, "Email Is Not Exits");
+            }
+            return View(forgetPasswordVM);
+        }
 
-		public ActionResult checkedYourInbox()
-		{
-			return View();
-		}
+        public IActionResult checkedYourInbox(string email)
+        {
+            var model = new CheckBoxViewModel { Email = email };
+            return View(model);
+        }
 
-		#endregion
+        #endregion
 
-		#region RestPassword
-		public IActionResult ResetPassword(string email , string token)
+        #region RestPassword
+        public IActionResult ResetPassword(string email , string token)
 		{
 			TempData["email"] = email;
 			TempData["token"] = token;

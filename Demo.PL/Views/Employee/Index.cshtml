@@ -2,77 +2,126 @@
 @{
     ViewData["Title"] = "Index";
 }
-@* <div class="alert alert-success">
-    @ViewData["message"]
-</div> *@
+
 @if (!string.IsNullOrEmpty(TempData["message"] as string))
 {
     <div class="alert alert-success">
         @TempData["message"]
     </div>
 }
-<h1 class="my-3">All Employee</h1>
-<a asp-controller="Employee" asp-action="Create" class="btn btn-primary my-3">Add New Employee</a>
 
-<form class="m-4" asp-action="Index" asp-controller="Employee">
+<h1 class="my-3 text-center">All Employees</h1>
+<a asp-action="Create" class="btn btn-success mb-3">Add New Employee</a>
 
+<form class="mb-5" asp-action="Index" asp-controller="Employee">
     <div class="row">
-        <div class="col-10">
+        <div class="col-md-10">
             <input placeholder="Search for employee by name" name="SearchValue" class="form-control" />
         </div>
-        <div class="col-2">
-            <input type="submit" value="Search" class="btn btn-success" />
+        <div class="col-md-2">
+            <input type="submit" value="Search" class="btn btn-success w-100" />
         </div>
     </div>
 </form>
-@if (Model.Count() > 0)
+
+@if (Model.Any())
 {
-    <table class="table table-striped table-hover">
+    <div class="row">
+        @foreach (var Employee in Model)
+        {
+            <div class="col-md-4 my-2">
+                <div class="card shadow-sm hover-card">
+                    <div class="text-center">
+                        <img src="~/Files/Images/@Employee.ImageName" class="img-fluid rounded-circle employee-img" alt="Employee Image" />
+                    </div>
+                    <div class="card-body text-center">
+                        <h5 class="card-title">@Employee.Name</h5>
+                        <p class="card-text"><strong>Department:</strong> @Employee.Department?.Name</p>
+                        <p class="card-text"><strong>Age:</strong> @Employee.Age</p>
+                        <p class="card-text"><strong>Email:</strong> @Employee.Email</p>
+                        <p class="card-text"><strong>Phone:</strong> @Employee.Phone</p>
+                        <p class="card-text"><strong>Hire Date:</strong> @Employee.HireDate.ToString("dd/MM/yyyy")</p>
 
+                        <p class="card-text">
+                            <strong>Active:</strong>
+                            @if (Employee.IsActive)
+                            {
+                                <i class="fas fa-check-circle text-success"></i>
+                            }
+                            else
+                            {
+                                <i class="fas fa-times-circle text-danger"></i>
+                            }
+                        </p>
 
-        <thead>
-        <th>@Html.DisplayNameFor(E => E.Name)</th>
-        <th>@Html.DisplayNameFor(E => E.Age)</th>
-        <th>@Html.DisplayNameFor(E => E.Image)</th>
+                        <p class="card-text">
+                            <strong>Deleted:</strong>
+                            @if (Employee.IsDeleted)
+                            {
+                                <i class="fas fa-check-circle text-success"></i>
+                            }
+                            else
+                            {
+                                <i class="fas fa-times-circle text-danger"></i>
+                            }
+                        </p>
 
-        <th>@Html.DisplayNameFor(E => E.Address)</th>
-        <th>@Html.DisplayNameFor(E => E.Salary)</th>
-        <th>@Html.DisplayNameFor(E => E.Department)</th>
-        <th>@Html.DisplayNameFor(E => E.IsActive)</th>
-        <th>@Html.DisplayNameFor(E => E.Email)</th>
-        <th>@Html.DisplayNameFor(E => E.Phone)</th>
-        <th>@Html.DisplayNameFor(E => E.HireDate)</th>
-        <th>@Html.DisplayNameFor(E => E.IsDeleted)</th>
-        <th>@Html.DisplayNameFor(E => E.Gender)</th>
-        <th>Details</th>
-        <th>Update</th>
-        <th>Delete</th>
-        </thead>
-        <tbody>
-            @foreach (var Employee in Model)
-            {
-                <tr>
-                    <td>@Employee.Name</td>
-                    <td>@Employee.Age</td>
-                    <td><img src="~/Files/Images/@Employee.ImageName" class="img-fluid rounded" height="40" width="40" /></td>
-                    <td>@Employee.Address</td>
-                    <td>@Employee.Salary</td>
-                    <td>@Employee.Department?.Name</td>
-                    <td>@Employee.IsActive</td>
-                    <td>@Employee.Email</td>
-                    <td>@Employee.Phone</td>
-                    <td>@Employee.HireDate</td>
-                    <td>@Employee.IsDeleted</td>
-                    <td>@Employee.Gender</td>
-                   <partial name="_ButtonPartial" model="@Employee.Id.ToString()"></partial>
-                </tr>
-            }
-        </tbody>
-    </table>
+                        <div class="d-flex justify-content-around mt-3">
+                            <div>
+                                <a asp-action="Details" asp-route-id="@Employee.Id" class="btn btn-info btn-sm hover-button">
+                                    <i class="fas fa-info-circle"></i>
+
+                                </a>
+                            </div>
+                            <div>
+                                <a asp-action="Edit" asp-route-id="@Employee.Id" class="btn btn-warning btn-sm hover-button">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                            </div>
+                            <div>
+                                <a asp-action="Delete" asp-route-id="@Employee.Id" class="btn btn-danger btn-sm hover-button">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
 }
 else
 {
-    <div class="m-3 alert alert-warning">
-        <p>There Is No Employees</p>
+    <div class="alert alert-warning text-center">
+        <p>There Are No Employees</p>
     </div>
 }
+
+<style>
+    .hover-card {
+        transition: transform 0.5s ease, box-shadow 0.5s ease;
+        border-radius: 10px;
+    }
+
+        .hover-card:hover {
+            transform: scale(1.05);
+        }
+
+    .employee-img {
+        height: 150px;
+        width: 150px;
+        border: 4px solid #007bff;
+        margin-top: -20px;
+    }
+    .hover-button {
+        position: relative;
+        transition: background-color 0.5s ease, transform 0.5s ease;
+        width: 80px;
+    }
+
+        .hover-button:hover {
+            transform: scale(1.05);
+        }
+
+
+</style>

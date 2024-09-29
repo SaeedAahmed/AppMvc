@@ -1,20 +1,16 @@
-﻿
+﻿@model CheckBoxViewModel
 @{
-    ViewData["Title"] = "checkedYourInbox";
-    Layout = "~/Views/Shared/_AythLayout.cshtml";
+    ViewData["Title"] = "Check Your Inbox";
+    Layout = "_AythLayout";
 }
 
-<div class="main-agileinfo">
-    <div class="agileits-top">
-        <div class="body">
 
-            <div>
-                Password Reset Link Has Been Sent To Your Email , Please Check Your Inbox
-            </div>
-            <div>
-                <a href="https://mail.google.com/mail/u/0/#inbox"> Your Inbox</a>
-            </div>
-        </div>
+        <div class="body">
+    <div class="alert alert-success text-center">
+        <h3>A password reset link has been sent to your email address.</h3>
+        <p>Please check your inbox. If you don't find the email, check your spam folder or <a href="mailto:@Model.Email">send a new request</a>.</p>
     </div>
-</div>
+        </div>
+ 
+
 

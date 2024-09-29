@@ -4,9 +4,8 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1 class="my-3">All Users</h1>
+<h1 class="my-3 text-center">All Users</h1>
 
-<a asp-action="Create" class="btn btn-primary">Create new User</a>
 
 @if (TempData["Message"] != null)
 {
@@ -17,31 +16,41 @@
 
 @if (Model?.Count() > 0)
 {
-    <table class="table table-hover table-striped mt-5 ">
-        <thead>
+    <table class="table table-bordered table-hover mt-5">
+        <thead class="table-dark">
             <tr>
                 <th>@Html.DisplayNameFor(User => User.Id)</th>
                 <th>@Html.DisplayNameFor(User => User.FName)</th>
-                <th>@Html.DisplayNameFor(User => User.lName)</th>
-                <th>@Html.DisplayNameFor(User => User.Phone)</th>
+                <th>@Html.DisplayNameFor(User => User.LName)</th>
+                <th>@Html.DisplayNameFor(User => User.PhoneNumber)</th>
                 <th>@Html.DisplayNameFor(User => User.Email)</th>
                 <th>@Html.DisplayNameFor(User => User.Roles)</th>
-                <th>Details</th>
-                <th>Update</th>
-                <th>Delete</th>
+                <th style="width: 200px;">Actions</th>
             </tr>
         </thead>
         <tbody>
             @foreach (var User in Model)
             {
                 <tr>
-                    <td>@Html.DisplayFor(e => User.Id) </td>
+                    <td>@Html.DisplayFor(e => User.Id)</td>
                     <td>@Html.DisplayFor(e => User.FName)</td>
-                    <td>@Html.DisplayFor(e => User.lName)</td>
-                    <td>@Html.DisplayFor(e => User.Phone)</td>
+                    <td>@Html.DisplayFor(e => User.LName)</td>
+                    <td>@Html.DisplayFor(e => User.PhoneNumber)</td>
                     <td>@Html.DisplayFor(e => User.Email)</td>
-                    <td>@string.Join(' ', User.Roles)</td>
-                            <partial name="_ButtonPartial" model="@User.Id" />
+                    <td>@string.Join(", ", User.Roles)</td> 
+                    <td>
+                        <div class="d-flex justify-content-around">
+                            <a asp-action="Details" asp-route-id="@User.Id" class="btn btn-info btn-sm mx-1" title="Details">
+                                <i class="fas fa-info-circle"></i> Details
+                            </a>
+                            <a asp-action="Edit" asp-route-id="@User.Id" class="btn btn-warning btn-sm mx-1" title="Update">
+                                <i class="fas fa-edit"></i> Update
+                            </a>
+                            <a asp-action="Delete" asp-route-id="@User.Id" class="btn btn-danger btn-sm mx-1" title="Delete">
+                                <i class="fas fa-trash"></i> Delete
+                            </a>
+                        </div>
+                    </td>
                 </tr>
             }
         </tbody>
@@ -49,7 +58,7 @@
 }
 else
 {
-    <div class="mt-5 alert alert-danger">
-        <h3>There is no Users</h3>
+    <div class="mt-5 alert alert-danger text-center">
+        <h3>There are no Users</h3>
     </div>
 }
